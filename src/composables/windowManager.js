@@ -1,16 +1,20 @@
-import { ref } from "vue";
+import { computed, ref, shallowRef } from "vue";
 
 const windows = ref({});
 const windowOrder = ref([]);
+const hiddenWindows = ref(new Set());
 
 export function useWindowManager() {
-  const register = () => {
+  const register = (name, component, options) => {
     const newID = crypto.randomUUID();
     windows.value[newID] = {
+      component: shallowRef(component),
+      name: name,
       x: 50,
       y: 50,
       width: 300,
       height: 200,
+      ...options,
     };
 
     windowOrder.value.push(newID);
@@ -38,5 +42,51 @@ export function useWindowManager() {
     window.height = size.height;
   };
 
-  return { windows, windowOrder, register, bringToFront, move, resize };
+  const close = (windowID) => {
+    delete windows.value[windowID];
+    const orderIndex = windowOrder.value.indexOf(windowID);
+    windowOrder.value.splice(orderIndex, 1);
+  };
+
+  const hide = (windowID) => {
+    hiddenWindows.value.add(windowID);
+  };
+
+  const show = (windowID) => {
+    hiddenWindows.value.delete(windowID);
+    bringToFront(windowID);
+  };
+
+  const registerOrSwitch = (name, component, data) => {
+    if (openWindowNames.value.has(name)) {
+      const windowID = Object.entries(windows.value).find(
+        ([, window]) => window.name === name,
+      )[0];
+      show(windowID);
+      return;
+    }
+
+    register(name, component, data);
+  };
+
+  const openWindowNames = computed(() => {
+    const nameSet = new Set();
+    Object.values(windows.value).map((window) => nameSet.add(window.name));
+    return nameSet;
+  });
+
+  return {
+    windows,
+    windowOrder,
+    hiddenWindows,
+    openWindowNames,
+    register,
+    bringToFront,
+    registerOrSwitch,
+    move,
+    resize,
+    close,
+    hide,
+    show,
+  };
 }

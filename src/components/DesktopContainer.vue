@@ -1,35 +1,53 @@
 <script setup>
-import { onMounted, provide, useTemplateRef } from "vue";
+import { provide, useTemplateRef } from "vue";
 import ApplicationDock from "./ApplicationDock.vue";
-import ApplicationWindow from "./ApplicationWindow.vue";
+import MinimizedWindow from "./MinimizedWindow.vue";
 import { useWindowManager } from "../composables/windowManager.js";
 
 const desktopElement = useTemplateRef("desktop");
 provide("desktopElement", desktopElement);
 
-const { windows, windowOrder, register, bringToFront, move, resize } =
-  useWindowManager();
-
-onMounted(() => {
-  for (let i = 0; i < 3; i++) {
-    register();
-  }
-});
+const {
+  windows,
+  windowOrder,
+  hiddenWindows,
+  bringToFront,
+  move,
+  resize,
+  close,
+  hide,
+  show,
+} = useWindowManager();
 </script>
 
 <template>
   <div class="desktop" ref="desktop">
-    <pre>{{ windows }}</pre>
-    <ApplicationWindow
+    <div class="icons">
+      <MinimizedWindow
+        @click="show(windowID)"
+        v-for="windowID in hiddenWindows"
+        :key="windowID"
+        :title="windows[windowID].title"
+        :icon="windows[windowID].icon"
+      />
+    </div>
+    <Component
+      :is="windows[windowID].component"
       v-for="(windowID, windowIndex) in windowOrder"
+      v-show="!hiddenWindows.has(windowID)"
       :key="windowID"
       :active="windowIndex === windowOrder.length - 1"
       :width="windows[windowID].width"
       :height="windows[windowID].height"
+      :title="windows[windowID].title"
+      :transparent="windows[windowID].transparent"
+      :minimizable="windows[windowID].minimizable"
       @focus="bringToFront(windowID)"
       @move="move(windowID, $event)"
       @resize="resize(windowID, $event)"
-    ></ApplicationWindow>
+      @close="close(windowID)"
+      @minimize="hide(windowID)"
+    ></Component>
     <ApplicationDock />
   </div>
 </template>
@@ -53,5 +71,17 @@ onMounted(() => {
 
 .dock {
   grid-row: 2;
+}
+
+.icons {
+  --spacing: 24px;
+
+  padding: var(--spacing);
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: var(--spacing);
+  grid-auto-flow: column;
+  min-height: 0;
 }
 </style>
