@@ -18,9 +18,9 @@ $icons:
   image-rendering: pixelated;
   filter: drop-shadow(3px 3px 0 rgb(0 0 0 / 0.2));
 
-  @for $i from 1 through length($icons) {
-    $icon: nth($icons, $i);
-    $y: floor(($i - 1) / $icons-per-row);
+  @for $i from 1 through list.length($icons) {
+    $icon: list.nth($icons, $i);
+    $y: math.floor(math.div(($i - 1), $icons-per-row));
     $x: ($i - 1) % $icons-per-row;
 
     &.#{$icon} {
