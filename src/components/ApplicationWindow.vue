@@ -98,7 +98,7 @@ onMounted(() => {
         </button>
       </div>
       <div class="content">
-        <slot></slot>
+        <slot :active></slot>
       </div>
     </div>
   </div>
@@ -112,6 +112,7 @@ onMounted(() => {
   overflow: auto;
   min-width: 200px;
   min-height: 150px;
+  user-select: none;
 
   &:not(.transparent) {
     padding: 2px;
@@ -164,7 +165,6 @@ onMounted(() => {
 
     .handle {
       flex: 1;
-      user-select: none;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -207,6 +207,8 @@ onMounted(() => {
   }
 
   .content {
+    display: grid;
+    position: relative;
     flex: 1 1 auto;
     overflow: auto;
     scrollbar-color: rgb(var(--color-tertiary-inactive))

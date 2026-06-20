@@ -35,13 +35,9 @@ const {
       :is="windows[windowID].component"
       v-for="(windowID, windowIndex) in windowOrder"
       v-show="!hiddenWindows.has(windowID)"
+      v-bind="windows[windowID]"
       :key="windowID"
       :active="windowIndex === windowOrder.length - 1"
-      :width="windows[windowID].width"
-      :height="windows[windowID].height"
-      :title="windows[windowID].title"
-      :transparent="windows[windowID].transparent"
-      :minimizable="windows[windowID].minimizable"
       @focus="bringToFront(windowID)"
       @move="move(windowID, $event)"
       @resize="resize(windowID, $event)"
@@ -63,10 +59,11 @@ const {
   grid-template-rows: 1fr min-content;
   image-rendering: pixelated;
   background: url("img/wallpaper.png") repeat-x;
-  font-family: "Tiny5", sans-serif;
+  font-family: serif, "Tiny5", sans-serif;
   font-weight: 400;
   font-style: normal;
   font-size: 16px;
+  user-select: none;
 }
 
 .dock {

@@ -29,6 +29,7 @@ button {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  user-select: none;
 
   span {
     white-space: nowrap;

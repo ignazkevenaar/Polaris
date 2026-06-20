@@ -1,3 +1,1 @@
-import applications from "./applications";
-
-export default [applications.test, applications.eyes];
+export default ["container", "eyes"];

@@ -42,6 +42,8 @@ defineProps({
       display: block;
       position: absolute;
       inset-block-end: 125%;
+      width: max-content;
+      max-width: 200px;
     }
   }
 

@@ -1,9 +1,10 @@
+import ContainerApplication from "../components/applications/ContainerApplication.vue";
 import TestApplication from "../components/applications/TestApplication.vue";
 import XEyesApplication from "../components/applications/XEyesApplication.vue";
 
 export default {
   test: {
-    name: "Test",
+    name: "Test, but it's actually very very long which might prove a problem...",
     title: "someTitle",
     component: TestApplication,
     icon: "application",
@@ -17,5 +18,13 @@ export default {
     height: 186,
     transparent: true,
     minimizable: false,
+  },
+  container: {
+    name: "Container",
+    title: "Container",
+    component: ContainerApplication,
+    icon: "application",
+    items: ["eyes", "test", "eyes", "test", "eyes", "test"],
+    resizable: true,
   },
 };

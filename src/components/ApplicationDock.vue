@@ -2,28 +2,58 @@
 import DockButton from "./DockButton.vue";
 import { useWindowManager } from "../composables/windowManager.js";
 import dock from "../config/dock.js";
+import { computed } from "vue";
+import applications from "../config/applications.js";
 
-const { registerOrSwitch, openWindowNames } = useWindowManager();
+const { windows, registerOrSwitch, openWindowIDs } = useWindowManager();
 
-const openOrSwitchApplication = (application) => {
-  registerOrSwitch(application.name, application.component, application);
+const openOrSwitchApplication = (applicationID) => {
+  const application = applications[applicationID];
+  registerOrSwitch(
+    applicationID,
+    application.name,
+    application.component,
+    application,
+  );
 };
+
+const openWindowsNotAlreadyInDock = computed(() => {
+  return Object.values(windows.value)
+    .filter((window) => {
+      const dockHasApplication = !!dock.find((dockApplicationID) => {
+        return dockApplicationID === window.id;
+      });
+      return !dockHasApplication;
+    })
+    .map((window) => window.id);
+});
 </script>
 
 <template>
   <div class="dockContainer">
     <div class="dock bevel color-primary">
-      <div class="bevel">
+      <div class="bevel flex">
         <div class="container emboss">
           <DockButton
-            v-for="(application, applicationIndex) in dock"
+            v-for="(applicationID, applicationIndex) in dock"
             :key="applicationIndex"
-            :class="{ active: false }"
-            :open="openWindowNames.has(application.name)"
-            :tooltip="application.name"
-            @click="openOrSwitchApplication(application)"
+            :open="openWindowIDs.has(applicationID)"
+            :tooltip="applications[applicationID].name"
+            @click="openOrSwitchApplication(applicationID)"
           >
-            <i class="icon" :class="application.icon"></i>
+            <i class="icon" :class="applications[applicationID].icon"></i>
+          </DockButton>
+        </div>
+        <div v-if="openWindowsNotAlreadyInDock.length" class="container emboss">
+          <DockButton
+            v-for="(
+              applicationID, applicationIndex
+            ) in openWindowsNotAlreadyInDock"
+            :key="applicationIndex"
+            :tooltip="applications[applicationID].name"
+            @click="openOrSwitchApplication(applicationID)"
+          >
+            <i class="icon" :class="applications[applicationID].icon"></i>
           </DockButton>
         </div>
       </div>
@@ -54,5 +84,10 @@ const openOrSwitchApplication = (application) => {
   width: auto;
   display: flex;
   box-sizing: border-box;
+}
+
+.flex {
+  display: flex;
+  gap: 4px;
 }
 </style>
