@@ -1,5 +1,6 @@
 import BrowserApplication from "../components/applications/BrowserApplication.vue";
 import ContainerApplication from "../components/applications/ContainerApplication.vue";
+import EightBallApplication from "../components/applications/EightBallApplication.vue";
 import TestApplication from "../components/applications/TestApplication.vue";
 import XEyesApplication from "../components/applications/XEyesApplication.vue";
 
@@ -35,5 +36,15 @@ export default {
     resizable: true,
     width: 800,
     height: 600,
+  },
+  eightBall: {
+    name: "Magic 8-Ball",
+    title: "Shake me",
+    component: EightBallApplication,
+    icon: "eightball",
+    width: 262,
+    height: 292,
+    transparent: true,
+    minimizable: false,
   },
 };
