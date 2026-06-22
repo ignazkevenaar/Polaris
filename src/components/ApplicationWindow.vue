@@ -4,12 +4,20 @@ import { useDraggable, useResizeObserver } from "@vueuse/core";
 
 const props = defineProps({
   width: {
-    type: Number,
-    default: 0,
+    type: [Number, String],
+    default: "auto",
   },
   height: {
-    type: Number,
-    default: 0,
+    type: [Number, String],
+    default: "auto",
+  },
+  contentWidth: {
+    type: [Number, String],
+    default: "auto",
+  },
+  contentHeight: {
+    type: [Number, String],
+    default: "auto",
   },
   active: {
     type: Boolean,
@@ -62,9 +70,18 @@ watchEffect(() => {
   emit("move", { x, y });
 });
 
-const myStyles = computed(() => ({
-  width: `${props.width}px`,
-  height: `${props.height}px`,
+const windowStyles = computed(() => ({
+  width: isNaN(props.width) ? props.width : `${props.width}px`,
+  height: isNaN(props.height) ? props.height : `${props.height}px`,
+}));
+
+const contentStyles = computed(() => ({
+  width: isNaN(props.contentWidth)
+    ? props.contentWidth
+    : `${props.contentWidth}px`,
+  height: isNaN(props.contentHeight)
+    ? props.contentHeight
+    : `${props.contentHeight}px`,
 }));
 
 onMounted(() => {
@@ -82,7 +99,7 @@ onMounted(() => {
 <template>
   <div
     ref="window"
-    :style="[style, myStyles]"
+    :style="[style, windowStyles]"
     class="window color-primary"
     :class="{ active, resizable, transparent, bevel: !transparent }"
     @mousedown="emit('focus')"
@@ -109,7 +126,11 @@ onMounted(() => {
           <span class="glyph bevel"></span>
         </button>
       </div>
-      <div class="content" :class="{ 'color-surface': !transparent }">
+      <div
+        class="content"
+        :class="transparent ? [] : ['color-surface', 'apply-color']"
+        :style="contentStyles"
+      >
         <slot :active></slot>
       </div>
     </div>
@@ -120,9 +141,10 @@ onMounted(() => {
 .window {
   --border-width: 2px;
 
+  display: grid;
   position: absolute;
   overflow: auto;
-  min-width: 200px;
+  min-width: 150px;
   min-height: 150px;
   user-select: none;
 

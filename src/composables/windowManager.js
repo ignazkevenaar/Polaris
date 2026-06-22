@@ -14,8 +14,6 @@ export function useWindowManager() {
       component: markRaw(component),
       x: 50,
       y: 50,
-      width: 300,
-      height: 200,
       ...options,
     };
 

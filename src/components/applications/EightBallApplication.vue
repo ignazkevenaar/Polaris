@@ -78,6 +78,7 @@ const onDragEnd = () => {
 <style lang="css" scoped>
 .ball {
   position: relative;
+  overflow: hidden;
 }
 
 .fade-enter-active,
