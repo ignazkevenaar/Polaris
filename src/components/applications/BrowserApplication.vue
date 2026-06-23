@@ -1,10 +1,11 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import ApplicationWindow from "../ApplicationWindow.vue";
 import { useWindowManager } from "../../composables/windowManager.js";
 import StyledInput from "../StyledInput.vue";
 import bookmarks from "../../config/bookmarks.js";
 import IconButton from "../IconButton.vue";
+import bubbleIframeMouseEvents from "../../utils/bubbleIframeMouseEvents.js";
 
 const { changeTitle } = useWindowManager();
 
@@ -13,13 +14,18 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  initialURL: { type: String, default: "index.html" },
+  initialURL: { type: String, default: "index" },
 });
 
 const urlScope = "web/";
 const currentURL = ref(props.initialURL);
-const pageTitle = ref(undefined);
 const browserLocation = ref("");
+const iframeEl = ref(null);
+
+const loadURL = (url) => {
+  currentURL.value = url;
+  iframeEl.value.src = `/${urlScope}${url}`;
+};
 
 const normalizeURL = (url) =>
   url
@@ -39,22 +45,19 @@ const onNavigate = (event) => {
 
   const prefix = `${location.origin}/${urlScope}`;
   const raw = href.startsWith(prefix) ? href.slice(prefix.length) : href;
-  currentURL.value = normalizeURL(raw);
-  pageTitle.value = contentWindow.document.title;
+  const normalizedURL = normalizeURL(raw);
+
+  currentURL.value = normalizedURL;
+
+  window.history.replaceState({ url: normalizedURL }, "", `/${normalizedURL}`);
   browserLocation.value = currentURL.value;
-  changeTitle(props.windowID, `${pageTitle.value} - WWW`);
+  changeTitle(props.windowID, `${contentWindow.document.title} — Browser`);
+
+  bubbleIframeMouseEvents(event.target);
 };
 
-watch(
-  currentURL,
-  (newURL) => {
-    window.history.pushState({}, "", `/${newURL}`);
-  },
-  { immediate: true },
-);
-
 const navigateTo = (url) => {
-  currentURL.value = url ?? browserLocation.value;
+  loadURL(url ?? browserLocation.value);
 };
 
 const handleLocationKeyDown = (event) => {
@@ -63,33 +66,51 @@ const handleLocationKeyDown = (event) => {
   }
 };
 
+const navigateBack = () => {
+  iframeEl.value.contentWindow.history.back();
+};
+
+const navigateForward = () => {
+  iframeEl.value.contentWindow.history.forward();
+};
+
 const navigateHome = () => {
-  currentURL.value = "index";
+  navigateTo("index");
 };
 
 const openCurrentPageInNewWindow = () => {
-  window.open(urlScope + currentURL.value, "_blank").focus();
+  const url = "/" + urlScope + currentURL.value;
+  console.log(url);
+  window.open(url, "_blank").focus();
 };
 
 const selectAll = (event) => {
   event.target.select();
 };
+
+const clearHistory = () => {
+  window.history.pushState({}, "", `/`);
+};
 </script>
 <template>
-  <ApplicationWindow>
+  <ApplicationWindow @close="clearHistory">
     <template #default="{ active }">
       <div class="grid">
-        <div>
+        <div class="toolbarContainer">
           <div class="toolbar color-surface" :class="{ active }">
-            <IconButton text="Back" icon="back" />
-            <IconButton text="Forward" icon="forward" />
+            <IconButton text="Back" icon="back" @click="navigateBack" />
+            <IconButton
+              text="Forward"
+              icon="forward"
+              @click="navigateForward"
+            />
             <IconButton text="Home" icon="home" @click="navigateHome" />
             <StyledInput
               v-model="browserLocation"
               @keydown="handleLocationKeyDown"
               @focus="selectAll"
             />
-            <IconButton text="Go" icon="go" @click="navigateHome" />
+            <IconButton text="Go" icon="go" @click="navigateTo()" />
             <IconButton
               text="Open externally"
               icon="external"
@@ -117,8 +138,11 @@ const selectAll = (event) => {
             </ul>
           </div>
         </div>
-
-        <iframe :src="`/${urlScope}${currentURL}`" @load="onNavigate"></iframe>
+        <iframe
+          ref="iframeEl"
+          :src="`/${urlScope}${props.initialURL}`"
+          @load="onNavigate"
+        ></iframe>
       </div>
     </template>
   </ApplicationWindow>
@@ -135,12 +159,17 @@ iframe {
   place-self: stretch;
 }
 
+.toolbarContainer {
+  min-width: 0;
+}
+
 .toolbar {
   display: flex;
   align-items: stretch;
 
   input {
     flex: 1;
+    min-width: 0;
   }
 
   .throbber {

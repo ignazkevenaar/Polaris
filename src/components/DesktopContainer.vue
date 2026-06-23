@@ -39,6 +39,7 @@ provide("font", font);
 provide("setFont", setFont);
 
 onMounted(async () => {
+  // Prevent recursive loading in <iframe>
   if (window !== window.top) return;
 
   const path = location.pathname;
@@ -46,6 +47,7 @@ onMounted(async () => {
 
   const check = await fetch(`/web/${path.slice(1)}`, { method: "HEAD" });
   if (!check.ok) {
+    console.warn("Invalid URL", path, check);
     window.history.replaceState({}, "", "/");
     return;
   }
