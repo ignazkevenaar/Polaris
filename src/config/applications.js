@@ -1,7 +1,9 @@
 import BrowserApplication from "../components/applications/BrowserApplication.vue";
 import ContainerApplication from "../components/applications/ContainerApplication.vue";
 import EightBallApplication from "../components/applications/EightBallApplication.vue";
+import FontApplication from "../components/applications/FontApplication.vue";
 import TestApplication from "../components/applications/TestApplication.vue";
+import ThemeApplication from "../components/applications/ThemeApplication.vue";
 import XEyesApplication from "../components/applications/XEyesApplication.vue";
 
 export default {
@@ -48,5 +50,20 @@ export default {
     contentHeight: 256,
     transparent: true,
     minimizable: false,
+  },
+  theme: {
+    name: "Themes",
+    title: "Themes",
+    component: ThemeApplication,
+    icon: "palette",
+    width: 600,
+  },
+  font: {
+    name: "Fonts",
+    title: "Fonts",
+    component: FontApplication,
+    icon: "fonts",
+    width: 600,
+    height: 400,
   },
 };

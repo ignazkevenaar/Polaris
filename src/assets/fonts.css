@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Butterfly+Kids&family=Coral+Pixels&family=DotGothic16&family=Jacquard+12&family=Jacquarda+Bastarda+9&family=Mountains+of+Christmas:wght@400;700&family=Pixelify+Sans:wght@400..700&family=Tiny5&display=swap");
+
+.font-serif {
+  font-family: serif;
+}
+
+.font-sans-serif {
+  font-family: sans-serif;
+}
+
+.font-comic-sans {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  font-optical-sizing: auto;
+  font-size: 0.9em;
+}
+
+.font-tiny5-regular {
+  font-family: "Tiny5", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.font-pixelify-sans-regular {
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.font-jacquard-12-regular {
+  font-family: "Jacquard 12", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.3em;
+}
+
+.font-jacquarda-bastarda-9-regular {
+  font-family: "Jacquarda Bastarda 9", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 1.3em;
+}
+
+.font-coral-pixels-regular {
+  font-family: "Coral Pixels", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 18px;
+}
+
+.font-dotgothic16-regular {
+  font-family: "DotGothic16", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.font-mountains-of-christmas-regular {
+  font-family: "Mountains of Christmas", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.font-butterfly-kids-regular {
+  font-family: "Butterfly Kids", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.5em;
+}

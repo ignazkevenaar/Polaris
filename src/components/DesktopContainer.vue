@@ -1,9 +1,11 @@
 <script setup>
-import { onMounted, provide, useTemplateRef } from "vue";
+import { ref, onMounted, provide, useTemplateRef } from "vue";
 import ApplicationDock from "./ApplicationDock.vue";
 import MinimizedWindow from "./MinimizedWindow.vue";
 import { useWindowManager } from "../composables/windowManager.js";
 import applications from "../config/applications.js";
+import themes from "../config/themes.js";
+import fonts from "../config/fonts.js";
 
 const desktopElement = useTemplateRef("desktop");
 provide("desktopElement", desktopElement);
@@ -21,6 +23,20 @@ const {
   show,
   registerOrSwitch,
 } = useWindowManager();
+
+const theme = ref(Object.keys(themes)[0]);
+const setTheme = (newTheme) => {
+  theme.value = newTheme;
+};
+provide("theme", theme);
+provide("setTheme", setTheme);
+
+const font = ref(Object.keys(fonts)[0]);
+const setFont = (newFont) => {
+  font.value = newFont;
+};
+provide("font", font);
+provide("setFont", setFont);
 
 onMounted(async () => {
   if (window !== window.top) return;
@@ -48,7 +64,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="desktop" ref="desktop">
+  <div
+    class="desktop theme"
+    :class="[`theme-${theme}`, `font-${font}`]"
+    ref="desktop"
+  >
     <div class="icons">
       <MinimizedWindow
         @click="show(windowID)"
@@ -87,11 +107,9 @@ onMounted(async () => {
   display: grid;
   grid-template-rows: 1fr min-content;
   image-rendering: pixelated;
-  background: url("img/wallpaper.png") repeat-x;
-  font-family: serif, "Tiny5", sans-serif;
+  background: rgb(var(--color-desktop));
   font-weight: 400;
   font-style: normal;
-  font-size: 16px;
   user-select: none;
 }
 

@@ -1,0 +1,64 @@
+/* Common derived styles applied at top level */
+.theme {
+  scrollbar-color: rgb(var(--color-tertiary-inactive))
+    rgb(var(--color-surface-inactive));
+
+  .active {
+    scrollbar-color: rgb(var(--color-tertiary-active))
+      rgb(var(--color-surface-active));
+  }
+}
+
+.theme-cde {
+  --color-desktop: 92 144 164;
+  --color-surface-active: 195 179 169;
+  --color-surface-inactive: 195 179 169;
+  --color-container-active: WORD;
+  --color-container-inactive: WORD;
+  --color-primary-active: 227 171 121;
+  --color-primary-inactive: 153 153 153;
+  --color-secondary-active: 92 144 164;
+  --color-secondary-inactive: 140 152 168;
+  --color-tertiary-active: 176 137 141;
+  --color-tertiary-inactive: 165 153 144;
+  --color-field-active: 105 111 128;
+  --color-field-inactive: 195 179 169;
+
+  --color-dock-outline: var(--color-primary-inactive);
+}
+
+.theme-blueSky {
+  --color-desktop: 104 118 162;
+  --color-surface-active: 152 164 187;
+  --color-surface-inactive: 152 164 187;
+  --color-container-active: WORD;
+  --color-container-inactive: WORD;
+  --color-primary-active: 178 186 213;
+  --color-primary-inactive: 151 159 186;
+  --color-secondary-active: 152 164 187;
+  --color-secondary-inactive: 152 164 187;
+  --color-tertiary-active: 143 175 198;
+  --color-tertiary-inactive: 152 164 187;
+  --color-field-active: 177 191 213;
+  --color-field-inactive: 177 191 213;
+
+  --color-dock-outline: var(--color-primary-inactive);
+}
+
+.theme-solar {
+  --color-desktop: 87 76 142;
+  --color-surface-active: 174 178 195;
+  --color-surface-inactive: 174 178 195;
+  --color-container-active: 147 151 165;
+  --color-container-inactive: 147 151 165;
+  --color-primary-active: 178 77 122;
+  --color-primary-inactive: 174 178 195;
+  --color-secondary-active: 99 99 156;
+  --color-secondary-inactive: 174 178 195;
+  --color-tertiary-active: 178 77 122;
+  --color-tertiary-inactive: 174 178 195;
+  --color-field-active: 99 99 156;
+  --color-field-inactive: 147 151 165;
+
+  --color-dock-outline: var(--color-primary-active);
+}

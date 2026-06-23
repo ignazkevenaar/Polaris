@@ -1,0 +1,83 @@
+<script setup>
+import { inject } from "vue";
+import fonts from "../../config/fonts.js";
+import ApplicationWindow from "../ApplicationWindow.vue";
+import IconButton from "../IconButton.vue";
+
+const currentFontID = inject("font");
+const setFontID = inject("setFont");
+</script>
+<template>
+  <ApplicationWindow>
+    <div class="windowContainer">
+      <label>System font used on windows, tooltips and text fields:</label>
+      <div class="scrollable emboss">
+        <div
+          v-for="(font, fontID) in fonts"
+          :key="fontID"
+          class="active bevel"
+          :class="{ 'color-tertiary': fontID === currentFontID }"
+        >
+          <div class="emboss space">
+            <div class="color-surface">
+              <IconButton :text="font.name" @click="setFontID(fontID)">
+                <div class="fontPreview" :class="`font-${fontID}`">
+                  ABCDEFG abcdefg
+                </div>
+              </IconButton>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="attribution">
+        <a
+          v-if="fonts[currentFontID].link"
+          :href="fonts[currentFontID].link"
+          target="_blank"
+          >Source</a
+        >
+        <p v-if="fonts[currentFontID].attribution">
+          {{ fonts[currentFontID].attribution }}
+        </p>
+      </div>
+    </div>
+  </ApplicationWindow>
+</template>
+
+<style lang="css" scoped>
+.windowContainer {
+  padding: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollable {
+  overflow: auto;
+
+  button {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .fontPreview {
+    font-size: 2em;
+  }
+}
+
+.space {
+  margin: 4px;
+}
+
+.attribution {
+  margin-top: 1em;
+
+  p {
+    margin: 0;
+  }
+
+  a[href] {
+    float: right;
+  }
+}
+</style>

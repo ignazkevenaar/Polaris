@@ -13,6 +13,7 @@ defineProps({
 
 <template>
   <button class="bevel interactive">
+    <slot></slot>
     <i v-if="icon" class="icon-16" :class="icon" />
     <span v-if="text">{{ text }}</span>
   </button>
@@ -24,6 +25,8 @@ button {
   flex-direction: column;
   align-items: center;
   font-family: inherit;
+  padding: 4px 8px;
+  font-size: 1em;
 }
 
 .icon-16 {

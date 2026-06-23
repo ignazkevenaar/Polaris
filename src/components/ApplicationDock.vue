@@ -31,8 +31,8 @@ const openWindowsNotAlreadyInDock = computed(() => {
 
 <template>
   <div class="dockContainer">
-    <div class="dock bevel color-primary">
-      <div class="bevel flex">
+    <div class="dock bevel color-dock-outline">
+      <div class="bevel flex color-primary">
         <div class="container emboss">
           <DockButton
             v-for="(applicationID, applicationIndex) in dock"
@@ -73,10 +73,8 @@ const openWindowsNotAlreadyInDock = computed(() => {
   padding: 2px;
 
   > div {
-    padding: 2px;
-    padding-bottom: 4px;
+    padding-top: 8px;
     padding-inline: 24px;
-    margin-bottom: -8px;
   }
 }
 

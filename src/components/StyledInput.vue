@@ -9,7 +9,7 @@ const focused = ref(false);
   <input
     v-model="model"
     type="text"
-    class="color-field"
+    class="color-field emboss"
     :class="{ active: focused }"
     @focus="focused = true"
     @blur="focused = false"
@@ -20,5 +20,7 @@ const focused = ref(false);
 input {
   appearance: none;
   outline: none;
+  font-family: inherit;
+  font-size: 1em;
 }
 </style>

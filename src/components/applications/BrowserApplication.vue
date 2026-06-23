@@ -161,7 +161,6 @@ iframe {
     li {
       padding: 2px 4px;
       text-decoration: underline;
-      color: white;
       display: flex;
       align-items: center;
       gap: 4px;

@@ -121,7 +121,7 @@ const onDragEnd = () => {
     display: block;
     width: min-content;
     font-family: sans-serif;
-    font-size: 0.4em;
+    font-size: 0.4rem;
     color: white;
     align-content: center;
     text-align: center;

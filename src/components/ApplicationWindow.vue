@@ -107,19 +107,16 @@ onMounted(() => {
   >
     <div class="container" :class="{ emboss: !transparent }">
       <div class="titleBar">
-        <button class="bevel" title="Close" @click="emit('close')">
+        <button class="bevel interactive" title="Close" @click="emit('close')">
           <span class="glyph bevel close"></span>
         </button>
-        <div
-          class="handle bevel text-shadow"
-          :class="{ shift: !minimizable }"
-          ref="handle"
-        >
+        <div class="handle bevel text-shadow" ref="handle">
           {{ title }}
+          <div v-if="!minimizable" class="spacer"></div>
         </div>
         <button
           v-if="minimizable"
-          class="bevel"
+          class="bevel interactive"
           title="Minimize"
           @click="emit('minimize')"
         >
@@ -139,8 +136,6 @@ onMounted(() => {
 
 <style lang="css" scoped>
 .window {
-  --border-width: 2px;
-
   display: grid;
   position: absolute;
   overflow: auto;
@@ -165,11 +160,6 @@ onMounted(() => {
         2px 2px 0px black,
         12px 12px 0px rgba(0 0 0 / 0.15);
     }
-
-    .content {
-      scrollbar-color: var(--color-tertiary-active-dark)
-        rgb(var(--color-surface));
-    }
   }
 
   &.resizable {
@@ -193,7 +183,7 @@ onMounted(() => {
     --border-width: 1px;
 
     flex: 0 0 auto;
-    height: 24px;
+    min-height: 18px;
     margin-bottom: 2px;
     display: flex;
     box-shadow:
@@ -206,12 +196,15 @@ onMounted(() => {
       overflow: hidden;
       text-overflow: ellipsis;
       min-width: 0;
-      text-align: center;
       vertical-align: middle;
-      line-height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-      &.shift {
-        padding-inline-end: 24px; /* Space that would have been taken up by minimize button */
+      .spacer {
+        aspect-ratio: 1;
+        height: 100%;
+        flex: 0 1 auto;
       }
     }
 
@@ -221,13 +214,6 @@ onMounted(() => {
       aspect-ratio: 1;
       display: grid;
       place-items: center;
-
-      &:active {
-        border-left: var(--border-width) inset var(--window-color-dark);
-        border-top: var(--border-width) inset var(--window-color-dark);
-        border-right: var(--border-width) inset var(--window-color-light);
-        border-bottom: var(--border-width) inset var(--window-color-light);
-      }
 
       .glyph {
         display: block;
@@ -248,8 +234,6 @@ onMounted(() => {
     position: relative;
     flex: 1 1 auto;
     overflow: auto;
-    scrollbar-color: rgb(var(--color-tertiary-inactive))
-      rgb(var(--color-surface));
   }
 }
 </style>

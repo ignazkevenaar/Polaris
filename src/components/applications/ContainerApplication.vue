@@ -33,7 +33,11 @@ const openOrSwitchApplication = (applicationID) => {
 <template>
   <ApplicationWindow>
     <template #default="{ active }">
-      <div class="grid" @click="selectedIndex = -1">
+      <div
+        class="color-container apply-color grid"
+        :class="{ active }"
+        @click="selectedIndex = -1"
+      >
         <div
           v-for="(item, index) in items"
           :key="index"

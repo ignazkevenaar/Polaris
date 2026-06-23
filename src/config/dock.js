@@ -1,1 +1,1 @@
-export default ["eightBall", "container", "browser", "eyes"];
+export default ["theme", "font", "eightBall", "container", "browser", "eyes"];

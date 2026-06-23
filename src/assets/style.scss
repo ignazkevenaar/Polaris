@@ -1,42 +1,5 @@
 :root {
   --border-width: 2px;
-
-  // Theme
-  --color-desktop: 92 144 164;
-  --color-surface-active: 195 179 169;
-  --color-surface-inactive: 195 179 169;
-  --color-primary-active: 227 171 121;
-  --color-primary-inactive: 153 153 153;
-  --color-secondary-active: 92 144 164;
-  --color-secondary-inactive: 140 152 168;
-  --color-tertiary-active: 176 137 141;
-  --color-tertiary-inactive: 165 153 144;
-  --color-field-active: 105 111 128;
-  --color-field-inactive: 165 153 144;
-
-  @mixin color-variation($name) {
-    --color-#{$name}-light: color-mix(
-      in srgb,
-      rgb(var(--color-#{$name})),
-      white 50%
-    );
-    --color-#{$name}-dark: color-mix(
-      in srgb,
-      rgb(var(--color-#{$name})),
-      black 10%
-    );
-  }
-
-  @include color-variation(surface-active);
-  @include color-variation(surface-inactive);
-  @include color-variation(primary-active);
-  @include color-variation(primary-inactive);
-  @include color-variation(secondary-active);
-  @include color-variation(secondary-inactive);
-  @include color-variation(tertiary-active);
-  @include color-variation(tertiary-inactive);
-  @include color-variation(field-active);
-  @include color-variation(field-inactive);
 }
 
 ::selection {
@@ -50,30 +13,34 @@
 @mixin color-variation-classes($name) {
   .color-#{$name} {
     --local-color: var(--color-#{$name}-inactive);
-    --local-color-light: var(--color-#{$name}-inactive-light);
-    --local-color-dark: var(--color-#{$name}-inactive-dark);
-
-    background-color: rgb(var(--local-color));
-    color: contrast-color(rgb(var(--local-color)));
-
     &.active {
       --local-color: var(--color-#{$name}-active);
-      --local-color-light: var(--color-#{$name}-active-light);
-      --local-color-dark: var(--color-#{$name}-active-dark);
     }
   }
 }
 
 @include color-variation-classes(surface);
+@include color-variation-classes(container);
 @include color-variation-classes(primary);
 @include color-variation-classes(secondary);
 @include color-variation-classes(tertiary);
 @include color-variation-classes(field);
 
+.color-dock-outline {
+  --local-color: var(--color-dock-outline);
+}
+
+.apply-color,
 .bevel,
 .emboss {
   background: rgb(var(--local-color));
   color: contrast-color(rgb(var(--local-color)));
+}
+
+.bevel,
+.emboss {
+  --local-color-light: color-mix(in srgb, rgb(var(--local-color)), white 50%);
+  --local-color-dark: color-mix(in srgb, rgb(var(--local-color)), black 10%);
 }
 
 .bevel {
