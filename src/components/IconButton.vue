@@ -8,11 +8,15 @@ defineProps({
     type: String,
     default: undefined,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 
 <template>
-  <button class="bevel interactive">
+  <button class="bevel interactive" :disabled>
     <slot></slot>
     <i v-if="icon" class="icon-16" :class="icon" />
     <span v-if="text">{{ text }}</span>
@@ -27,6 +31,10 @@ button {
   font-family: inherit;
   padding: 4px 8px;
   font-size: 1em;
+
+  &:disabled > * {
+    opacity: 0.5;
+  }
 }
 
 .icon-16 {

@@ -49,10 +49,10 @@
   border-right: var(--border-width) outset var(--local-color-dark);
   border-bottom: var(--border-width) outset var(--local-color-dark);
 
-  &.interactive {
+  &.interactive:enabled {
     cursor: pointer;
 
-    &:enabled:active {
+    &:active {
       border-left: var(--border-width) inset var(--local-color-dark);
       border-top: var(--border-width) inset var(--local-color-dark);
       border-right: var(--border-width) inset var(--local-color-light);
