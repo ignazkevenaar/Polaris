@@ -38,6 +38,24 @@ const setFont = (newFont) => {
 provide("font", font);
 provide("setFont", setFont);
 
+const openBrowser = (URL) => {
+  if (!URL) return;
+
+  const browserApplication = applications.browser;
+  registerOrSwitch(
+    "browser",
+    browserApplication.name,
+    browserApplication.component,
+    {
+      ...browserApplication,
+      initialURL: URL,
+    },
+  );
+
+  return true;
+};
+provide("openBrowser", openBrowser);
+
 onMounted(async () => {
   // Prevent recursive loading in <iframe>
   if (window !== window.top) return;
@@ -52,16 +70,7 @@ onMounted(async () => {
     return;
   }
 
-  const browserApplication = applications.browser;
-  registerOrSwitch(
-    "browser",
-    browserApplication.name,
-    browserApplication.component,
-    {
-      ...browserApplication,
-      initialURL: path.slice(1),
-    },
-  );
+  openBrowser(path.slice(1));
 });
 </script>
 
@@ -101,10 +110,13 @@ onMounted(async () => {
 
 <style lang="css" scoped>
 .desktop {
+--margin: 32px;
+
   position: relative;
   overflow: hidden;
   width: 1024px;
   height: 768px;
+  margin: --margin;
   border-radius: 10px;
   display: grid;
   grid-template-rows: 1fr min-content;
