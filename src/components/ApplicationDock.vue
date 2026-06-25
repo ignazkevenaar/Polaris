@@ -1,61 +1,59 @@
 <script setup>
-import DockButton from "./DockButton.vue";
 import { useWindowManager } from "../composables/windowManager.js";
 import dock from "../config/dock.js";
 import { computed } from "vue";
-import applications from "../config/applications.js";
+import DockSeparator from "./dock/DockSeparator.vue";
+import DockContainer from "./dock/DockContainer.vue";
 
-const { windows, registerOrSwitch, openWindowIDs } = useWindowManager();
-
-const openOrSwitchApplication = (applicationID) => {
-  const application = applications[applicationID];
-  registerOrSwitch(
-    applicationID,
-    application.name,
-    application.component,
-    application,
-  );
-};
+const { windows } = useWindowManager();
 
 const openWindowsNotAlreadyInDock = computed(() => {
   return Object.values(windows.value)
     .filter((window) => {
-      const dockHasApplication = !!dock.find((dockApplicationID) => {
-        return dockApplicationID === window.id;
-      });
+      const dockHasApplication = !!dock.some(
+        (item) =>
+          Array.isArray(item.items) &&
+          item.items.find(
+            (dockApplicationID) => dockApplicationID === window.id,
+          ),
+      );
       return !dockHasApplication;
     })
     .map((window) => window.id);
 });
+
+// Filter out container items without any items, specifically for the "openWindows"
+const parsedDockItems = computed(() =>
+  dock
+    .map((item) => {
+      if (item.type === "container") {
+        if (item.items === "runningApplications") {
+          if (openWindowsNotAlreadyInDock.value.length > 0) {
+            return {
+              ...item,
+              items: openWindowsNotAlreadyInDock.value,
+            };
+          }
+          return;
+        }
+
+        return item.items.length > 0 ? item : undefined;
+      }
+    })
+    .filter(Boolean),
+);
 </script>
 
 <template>
   <div class="dockContainer">
     <div class="dock bevel color-dock-outline">
       <div class="bevel flex color-primary">
-        <div class="container emboss">
-          <DockButton
-            v-for="(applicationID, applicationIndex) in dock"
-            :key="applicationIndex"
-            :open="openWindowIDs.has(applicationID)"
-            :tooltip="applications[applicationID].name"
-            @click="openOrSwitchApplication(applicationID)"
-          >
-            <i class="icon-64" :class="applications[applicationID].icon"></i>
-          </DockButton>
-        </div>
-        <div v-if="openWindowsNotAlreadyInDock.length" class="container emboss">
-          <DockButton
-            v-for="(
-              applicationID, applicationIndex
-            ) in openWindowsNotAlreadyInDock"
-            :key="applicationIndex"
-            :tooltip="applications[applicationID].name"
-            @click="openOrSwitchApplication(applicationID)"
-          >
-            <i class="icon-64" :class="applications[applicationID].icon"></i>
-          </DockButton>
-        </div>
+        <template v-for="(item, index) in parsedDockItems" :key="index">
+          <DockContainer
+            :items="item.type === 'runningApplications' ? [] : item.items"
+          />
+          <DockSeparator v-if="index < parsedDockItems.length - 1" />
+        </template>
       </div>
     </div>
   </div>
@@ -78,14 +76,7 @@ const openWindowsNotAlreadyInDock = computed(() => {
   }
 }
 
-.container {
-  width: auto;
-  display: flex;
-  box-sizing: border-box;
-}
-
 .flex {
   display: flex;
-  gap: 4px;
 }
 </style>

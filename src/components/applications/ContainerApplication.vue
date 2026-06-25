@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import applications from "../../config/applications.js";
 import ApplicationWindow from "../ApplicationWindow.vue";
 import { useWindowManager } from "../../composables/windowManager.js";
@@ -29,39 +29,41 @@ const openOrSwitchApplication = (applicationID) => {
     application,
   );
 };
+
+const openBrowser = inject("openBrowser");
 </script>
 <template>
   <ApplicationWindow>
     <template #default="{ active }">
       <div
-        class="color-container apply-color grid"
+        class="color-container emboss grid"
         :class="{ active }"
         @click="selectedIndex = -1"
       >
-        <div
-          v-for="(item, index) in items"
-          :key="index"
-          class="iconContainer"
-          :class="{ selected: index === selectedIndex }"
-          @click.stop="selectedIndex = index"
-          @dblclick="openOrSwitchApplication(item)"
-        >
-          <div :class="getSelectedClasses(index, selectedIndex, active)">
-            <i
-              v-if="applications[item].icon"
-              class="icon-64"
-              :class="applications[item].icon"
-            ></i>
-          </div>
+        <template v-for="(item, index) in items" :key="index">
           <div
-            class="label"
-            :class="getSelectedClasses(index, selectedIndex, active)"
+            class="iconContainer"
+            :class="{ selected: index === selectedIndex }"
+            @click.stop="selectedIndex = index"
+            @dblclick="openBrowser(item.href) ?? openOrSwitchApplication(item)"
           >
-            <span>
-              {{ applications[item].name }}
-            </span>
+            <div :class="getSelectedClasses(index, selectedIndex, active)">
+              <i
+                v-if="item.icon ?? applications[item].icon"
+                class="icon-64"
+                :class="item.icon ?? applications[item].icon"
+              ></i>
+            </div>
+            <div
+              class="label"
+              :class="getSelectedClasses(index, selectedIndex, active)"
+            >
+              <span>
+                {{ item.name ?? applications[item].name }}
+              </span>
+            </div>
           </div>
-        </div>
+        </template>
       </div>
     </template>
   </ApplicationWindow>
@@ -71,11 +73,13 @@ const openOrSwitchApplication = (applicationID) => {
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 100px);
-  grid-auto-rows: 150px;
+  grid-auto-rows: minmax(120px, 150px);
   place-items: start center;
   padding: 8px;
   gap: 8px;
   place-self: stretch;
+  margin: 6px;
+  overflow: auto;
 }
 
 .iconContainer {
