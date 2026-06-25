@@ -1,8 +1,16 @@
 <script setup>
-import { computed, inject, onMounted, useTemplateRef, watchEffect } from "vue";
+import { computed, inject, onMounted, useTemplateRef } from "vue";
 import { useDraggable, useResizeObserver } from "@vueuse/core";
 
 const props = defineProps({
+  x: {
+    type: Number,
+    default: 0,
+  },
+  y: {
+    type: Number,
+    default: 0,
+  },
   width: {
     type: [Number, String],
     default: "auto",
@@ -43,7 +51,6 @@ const props = defineProps({
 
 const emit = defineEmits([
   "focus",
-  "move",
   "resize",
   "close",
   "minimize",
@@ -57,17 +64,13 @@ const windowElement = useTemplateRef("window");
 const titleBarHandleElement = useTemplateRef("handle");
 
 // `style` will be a helper computed for `left: ?px; top: ?px;`
-const { x, y, style } = useDraggable(windowElement, {
-  initialValue: { x: 40, y: 40 },
+const { style } = useDraggable(windowElement, {
+  initialValue: { x: props.x, y: props.y },
   handle: titleBarHandleElement,
   containerElement: desktopElement,
   onStart: (position, event) => emit("dragStart", position, event),
   onMove: (position, event) => emit("dragMove", position, event),
   onEnd: (position, event) => emit("dragEnd", position, event),
-});
-
-watchEffect(() => {
-  emit("move", { x, y });
 });
 
 const windowStyles = computed(() => ({

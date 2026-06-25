@@ -90,7 +90,7 @@ onMounted(async () => {
       :active="focusOrder[focusOrder.length - 1] === windowID"
       :style="{ zIndex: focusOrder.indexOf(windowID) + 1 }"
       @focus="bringToFront(windowID)"
-      @move="move(windowID, $event)"
+      @drag-move="move(windowID, $event)"
       @resize="resize(windowID, $event)"
       @close="close(windowID)"
       @minimize="hide(windowID)"

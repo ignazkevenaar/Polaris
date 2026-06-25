@@ -5,15 +5,41 @@ const focusOrder = ref([]);
 const windowOrder = ref([]);
 const hiddenWindows = ref(new Set());
 
+// Opens every new window with a little offset so their titlebars don't overlap
+// Every time you move a window from it's original position, it resets the global offset
+const maxOffset = 400;
+const tilingOffset = 40;
+let tilingWindowCount = 0;
+
+const incrementAndgetOffset = () => {
+  tilingWindowCount++;
+
+  return [
+    Math.min((tilingWindowCount + 1) * tilingOffset, maxOffset),
+    Math.min((tilingWindowCount + 1) * tilingOffset, maxOffset),
+  ];
+};
+
+const maybeDecreaseTiling = (window) => {
+  // Decrement this counter to allow new window to be opened at a lesser tiling level
+  if (window.isAtOriginalPosition) {
+    window.isAtOriginalPosition = false;
+    tilingWindowCount = Math.max(tilingWindowCount - 1, 0);
+  }
+};
+
 export function useWindowManager() {
   const register = (id, name, component, options) => {
     const newID = crypto.randomUUID();
+    const [x, y] = incrementAndgetOffset();
+
     windows.value[newID] = {
       id,
       name,
       component: markRaw(component),
-      x: 50,
-      y: 50,
+      x,
+      y,
+      isAtOriginalPosition: true,
       ...options,
     };
 
@@ -33,6 +59,8 @@ export function useWindowManager() {
 
   const move = (windowID, position) => {
     const window = windows.value[windowID];
+    maybeDecreaseTiling(window);
+
     window.x = position.x;
     window.y = position.y;
   };
@@ -44,6 +72,9 @@ export function useWindowManager() {
   };
 
   const close = (windowID) => {
+    const window = windows.value[windowID];
+    maybeDecreaseTiling(window);
+
     delete windows.value[windowID];
     const focusIndex = focusOrder.value.indexOf(windowID);
     focusOrder.value.splice(focusIndex, 1);
