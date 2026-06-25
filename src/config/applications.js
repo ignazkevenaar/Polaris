@@ -86,4 +86,20 @@ export default {
     resizable: true,
     items: ["eightBall", "eyes"],
   },
+  aboutMe: {
+    name: "About me",
+    title: "About me",
+    component: ContainerApplication,
+    icon: "rolodex",
+    width: 480,
+    height: 320,
+    resizable: true,
+    items: [
+      {
+        name: "Who's this guy!?",
+        icon: "ignaz",
+        href: "aboutme",
+      },
+    ],
+  },
 };

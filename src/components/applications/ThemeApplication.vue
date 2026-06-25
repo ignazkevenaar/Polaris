@@ -36,7 +36,7 @@ const setThemeID = inject("setTheme");
                           <div class="bevel"></div>
                         </div>
                       </div>
-                      <div class="color-surface apply-color content">
+                      <div class="color-surface bevel content">
                         <label>Name</label>
                         <StyledInput disabled class="input active" />
                         <div class="end">
@@ -148,6 +148,10 @@ const setThemeID = inject("setTheme");
   .content {
     padding: 8px;
     text-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
 
     > *:not(:last-child) {
       margin-bottom: 4px;
@@ -155,10 +159,6 @@ const setThemeID = inject("setTheme");
 
     label {
       display: block;
-    }
-
-    .input {
-      width: calc(100% - 8px);
     }
 
     .end {

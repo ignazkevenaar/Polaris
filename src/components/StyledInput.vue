@@ -22,5 +22,6 @@ input {
   outline: none;
   font-family: inherit;
   font-size: 1em;
+  padding-inline: 8px;
 }
 </style>

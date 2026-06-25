@@ -126,9 +126,10 @@ onMounted(() => {
           <span class="glyph bevel"></span>
         </button>
       </div>
+      <slot name="toolbar" :active></slot>
       <div
         class="content"
-        :class="transparent ? [] : ['color-surface', 'apply-color']"
+        :class="transparent ? [] : ['color-surface', 'bevel']"
         :style="contentStyles"
       >
         <slot :active></slot>
@@ -187,7 +188,6 @@ onMounted(() => {
 
     flex: 0 0 auto;
     min-height: 18px;
-    margin-bottom: 2px;
     display: flex;
     box-shadow:
       0 1px 0 rgb(0 0 0 / 0.15),
