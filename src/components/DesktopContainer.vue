@@ -72,6 +72,10 @@ onMounted(async () => {
 
   openBrowser(path.slice(1));
 });
+
+const unfocusWindows = () => {
+  bringToFront("dock");
+};
 </script>
 
 <template>
@@ -80,6 +84,7 @@ onMounted(async () => {
     :class="[`theme-${theme}`, `font-${font}`]"
     ref="desktop"
   >
+    <div class="clickable" @click="unfocusWindows" />
     <div class="icons">
       <MinimizedWindow
         @click="show(windowID)"
@@ -96,7 +101,7 @@ onMounted(async () => {
       :window-i-d="windowID"
       v-bind="windows[windowID]"
       :key="windowID"
-      :active="focusOrder[focusOrder.length - 1] === windowID"
+      :active="focusOrder.at(-1) === windowID"
       :style="{ zIndex: focusOrder.indexOf(windowID) + 1 }"
       @focus="bringToFront(windowID)"
       @drag-move="move(windowID, $event)"
@@ -104,7 +109,7 @@ onMounted(async () => {
       @close="close(windowID)"
       @minimize="hide(windowID)"
     ></Component>
-    <ApplicationDock />
+    <ApplicationDock :active="focusOrder.at(-1) === 'dock'" />
   </div>
 </template>
 
@@ -127,6 +132,11 @@ onMounted(async () => {
   user-select: none;
 }
 
+.clickable {
+  position: absolute;
+  inset: 0;
+}
+
 .dock {
   grid-row: 2;
 }
@@ -134,6 +144,8 @@ onMounted(async () => {
 .icons {
   --spacing: 24px;
 
+  position: relative;
+  z-index: 0;
   padding: var(--spacing);
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -141,5 +153,10 @@ onMounted(async () => {
   gap: var(--spacing);
   grid-auto-flow: column;
   min-height: 0;
+  pointer-events: none;
+
+  > * {
+    pointer-events: initial;
+  }
 }
 </style>

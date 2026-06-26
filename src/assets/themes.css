@@ -23,8 +23,6 @@
   --color-tertiary-inactive: 165 153 144;
   --color-field-active: 105 111 128;
   --color-field-inactive: 195 179 169;
-
-  --color-dock-outline: var(--color-primary-inactive);
 }
 
 .theme-blueSky {
@@ -59,6 +57,4 @@
   --color-tertiary-inactive: 174 178 195;
   --color-field-active: 99 99 156;
   --color-field-inactive: 147 151 165;
-
-  --color-dock-outline: var(--color-primary-active);
 }

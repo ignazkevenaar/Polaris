@@ -1,7 +1,7 @@
 import { computed, markRaw, ref } from "vue";
 
 const windows = ref({});
-const focusOrder = ref([]);
+const focusOrder = ref(["dock"]);
 const windowOrder = ref([]);
 const hiddenWindows = ref(new Set());
 

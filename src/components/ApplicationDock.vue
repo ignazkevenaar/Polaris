@@ -7,6 +7,12 @@ import DockContainer from "./dock/DockContainer.vue";
 
 const { windows } = useWindowManager();
 
+defineProps({
+  active: {
+    type: Boolean,
+  },
+});
+
 const openWindowsNotAlreadyInDock = computed(() => {
   return Object.values(windows.value)
     .filter((window) => {
@@ -46,7 +52,7 @@ const parsedDockItems = computed(() =>
 
 <template>
   <div class="dockContainer">
-    <div class="dock bevel color-dock-outline">
+    <div class="dock bevel color-primary" :class="{ active }">
       <div class="bevel flex color-primary">
         <template v-for="(item, index) in parsedDockItems" :key="index">
           <DockContainer

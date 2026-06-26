@@ -26,10 +26,6 @@
 @include color-variation-classes(tertiary);
 @include color-variation-classes(field);
 
-.color-dock-outline {
-  --local-color: var(--color-dock-outline);
-}
-
 .apply-color,
 .bevel,
 .emboss {
