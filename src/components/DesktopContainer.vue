@@ -101,10 +101,11 @@ const unfocusWindows = () => {
       :window-i-d="windowID"
       v-bind="windows[windowID]"
       :key="windowID"
-      :active="focusOrder.at(-1) === windowID"
-      :style="{ zIndex: focusOrder.indexOf(windowID) + 1 }"
+      :active="focusOrder.at(-1) === windowID && !hiddenWindows.has(windowID)"
+      :z-index="focusOrder.indexOf(windowID) + 1"
       @focus="bringToFront(windowID)"
       @drag-move="move(windowID, $event)"
+      @drag-end="move(windowID, $event)"
       @resize="resize(windowID, $event)"
       @close="close(windowID)"
       @minimize="hide(windowID)"
@@ -115,7 +116,7 @@ const unfocusWindows = () => {
 
 <style lang="css" scoped>
 .desktop {
---margin: 32px;
+  --margin: 32px;
 
   position: relative;
   overflow: hidden;
@@ -130,6 +131,7 @@ const unfocusWindows = () => {
   font-weight: 400;
   font-style: normal;
   user-select: none;
+  z-index: 0; /* Window 'animation' when closing */
 }
 
 .clickable {

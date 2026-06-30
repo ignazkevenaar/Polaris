@@ -41,12 +41,13 @@ export default {
     contentHeight: 256,
     transparent: true,
     minimizable: false,
+    dragDirectly: true,
   },
   theme: {
     name: "Themes",
     title: "Themes",
     component: ThemeApplication,
-    icon: "palette",
+    icon: "paintroller",
     width: 600,
   },
   font: {

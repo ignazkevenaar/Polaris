@@ -5,7 +5,7 @@ import { useWindowManager } from "../../composables/windowManager.js";
 import StyledInput from "../StyledInput.vue";
 import bookmarks from "../../config/bookmarks.js";
 import IconButton from "../IconButton.vue";
-import bubbleIframeMouseEvents from "../../utils/bubbleIframeMouseEvents.js";
+import bubbleIframePointerEvents from "../../utils/bubbleIframePointerEvents.js";
 import { injectStyles } from "../../config/injectStyles.js";
 
 const { changeTitle } = useWindowManager();
@@ -75,7 +75,7 @@ const onNavigate = (event) => {
   changeTitle(props.windowID, `${contentWindow.document.title} — Browser`);
 
   injectStyles(windowElement.value.$el, contentWindow.document.documentElement);
-  bubbleIframeMouseEvents(event.target);
+  bubbleIframePointerEvents(event.target);
 
   throbberOn.value = true;
 };

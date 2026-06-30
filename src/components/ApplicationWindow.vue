@@ -1,6 +1,7 @@
 <script setup>
-import { computed, inject, onMounted, useTemplateRef } from "vue";
+import { ref, computed, watch, inject, onMounted, useTemplateRef } from "vue";
 import { useDraggable, useResizeObserver } from "@vueuse/core";
+import { useWindowEffects } from "../composables/windowEffects";
 
 const props = defineProps({
   x: {
@@ -27,6 +28,10 @@ const props = defineProps({
     type: [Number, String],
     default: "auto",
   },
+  zIndex: {
+    type: Number,
+    default: undefined,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -47,6 +52,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  dragDirectly: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits([
@@ -59,23 +68,74 @@ const emit = defineEmits([
   "dragEnd",
 ]);
 
+const {
+  prefersReducedMotion,
+  lowestZIndex,
+  repaintWindow,
+  paintDesktopColor,
+  showingDesktopColor,
+} = useWindowEffects(useTemplateRef("windowContent"));
+
 const desktopElement = inject("desktopElement");
 const windowElement = useTemplateRef("window");
 const titleBarHandleElement = useTemplateRef("handle");
+const dragDirectly = computed(
+  () => prefersReducedMotion.value || props.dragDirectly,
+);
+let initialDragPosition = undefined;
+const dragging = ref(false);
 
 // `style` will be a helper computed for `left: ?px; top: ?px;`
 const { style } = useDraggable(windowElement, {
   initialValue: { x: props.x, y: props.y },
   handle: titleBarHandleElement,
   containerElement: desktopElement,
-  onStart: (position, event) => emit("dragStart", position, event),
-  onMove: (position, event) => emit("dragMove", position, event),
-  onEnd: (position, event) => emit("dragEnd", position, event),
+  onStart: (position, event) => {
+    emit("dragStart", position, event);
+  },
+  onMove: (position, event) => {
+    if (!initialDragPosition) initialDragPosition = position;
+    else if (!dragDirectly.value) {
+      if (!dragging.value) {
+        const threshold = 10;
+        const delta =
+          Math.abs(position.x - initialDragPosition.x) +
+          Math.abs(position.y - initialDragPosition.y);
+        if (delta > threshold) dragging.value = true;
+      }
+    } else emit("dragMove", position, event);
+  },
+  onEnd: async (position, event) => {
+    if (dragDirectly.value) {
+      emit("dragEnd", position, event);
+      return;
+    }
+    if (dragging.value) {
+      await paintDesktopColor();
+      initialDragPosition = undefined;
+      dragging.value = false;
+      repaintWindow();
+    }
+    emit("dragEnd", position, event);
+  },
 });
 
+const maybeConvertStyleToPX = (val) => (isNaN(val) ? val : `${val}px`);
+
+const getActualWindowDimensions = () => {
+  const rect = windowElement.value.getBoundingClientRect();
+  return {
+    width: `${rect.width}px`,
+    height: `${rect.height}px`,
+  };
+};
+
 const windowStyles = computed(() => ({
-  width: isNaN(props.width) ? props.width : `${props.width}px`,
-  height: isNaN(props.height) ? props.height : `${props.height}px`,
+  left: maybeConvertStyleToPX(props.x),
+  top: maybeConvertStyleToPX(props.y),
+  width: maybeConvertStyleToPX(props.width),
+  height: maybeConvertStyleToPX(props.height),
+  zIndex: lowestZIndex.value ? -100 : props.zIndex,
 }));
 
 const contentStyles = computed(() => ({
@@ -96,78 +156,160 @@ onMounted(() => {
       emit("resize", { width, height });
     });
   }
+
+  watch(
+    () => [props.zIndex, props.active],
+    ([newZ, newActive], oldValues) => {
+      if (oldValues === undefined) {
+        repaintWindow();
+        return;
+      }
+      const [oldZ] = oldValues;
+      if ((newZ && newZ > oldZ) || newActive) repaintWindow();
+    },
+    { immediate: true },
+  );
 });
+
+const onClose = async () => {
+  await paintDesktopColor();
+  emit("close");
+};
+
+const onMinimize = async () => {
+  await paintDesktopColor();
+  emit("minimize");
+};
 </script>
 
 <template>
   <div
     ref="window"
-    :style="[style, windowStyles]"
-    class="window color-primary"
-    :class="{ active, resizable, transparent, bevel: !transparent }"
-    @mousedown="emit('focus')"
-    @resize="test"
+    :style="[windowStyles]"
+    @pointerdown="emit('focus')"
+    class="windowWrapper"
+    :class="{
+      active,
+      resizable,
+      transparent,
+      desktopColor: showingDesktopColor,
+      shadow: !showingDesktopColor,
+    }"
   >
-    <div class="container" :class="{ emboss: !transparent }">
-      <div class="titleBar">
-        <button class="bevel interactive" title="Close" @click="emit('close')">
-          <span class="glyph bevel close"></span>
-        </button>
-        <div class="handle bevel text-shadow" ref="handle">
-          {{ title }}
-          <div v-if="!minimizable" class="spacer"></div>
+    <div
+      class="window color-primary"
+      :class="{
+        active,
+        bevel: !transparent,
+      }"
+    >
+      <div class="container" :class="{ emboss: !transparent }">
+        <div class="titleBar">
+          <button class="bevel interactive" title="Close" @click="onClose">
+            <span class="glyph bevel close"></span>
+          </button>
+          <div class="handle bevel text-shadow" ref="handle">
+            {{ title }}
+            <div v-if="!minimizable" class="spacer"></div>
+          </div>
+          <button
+            v-if="minimizable"
+            class="bevel interactive"
+            title="Minimize"
+            @click="onMinimize"
+          >
+            <span class="glyph bevel"></span>
+          </button>
         </div>
-        <button
-          v-if="minimizable"
-          class="bevel interactive"
-          title="Minimize"
-          @click="emit('minimize')"
+        <slot name="toolbar" :active></slot>
+        <div
+          ref="windowContent"
+          class="content"
+          :class="transparent ? [] : ['color-surface', 'bevel']"
+          :style="contentStyles"
         >
-          <span class="glyph bevel"></span>
-        </button>
-      </div>
-      <slot name="toolbar" :active></slot>
-      <div
-        class="content"
-        :class="transparent ? [] : ['color-surface', 'bevel']"
-        :style="contentStyles"
-      >
-        <slot :active></slot>
+          <slot :active></slot>
+        </div>
       </div>
     </div>
+
+    <!-- This element is a border that's shown as a target where you're about to drag the window to.
+    From the before-times before we had fast enough PCs or compositing window managers... :-) -->
+    <Teleport :to="desktopElement">
+      <div
+        v-if="dragging"
+        class="dragShadow"
+        :style="[style, getActualWindowDimensions()]"
+      ></div>
+    </Teleport>
   </div>
 </template>
 
 <style lang="css" scoped>
-.window {
-  display: grid;
+@property --wipe-percentage {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: false;
+}
+
+@keyframes wipe {
+  from {
+    --wipe-percentage: 0%;
+  }
+  to {
+    --wipe-percentage: 100%;
+  }
+}
+
+.windowWrapper {
   position: absolute;
-  overflow: auto;
   min-width: 150px;
   min-height: 150px;
-  user-select: none;
+  display: grid;
 
-  &:not(.transparent) {
-    padding: 2px;
+  &.resizable {
+    resize: both;
+    overflow: hidden;
+  }
+
+  &.shadow:not(.transparent) {
     box-shadow:
       2px 2px 0px black,
       4px 4px 0px rgba(0 0 0 / 0.25);
   }
 
-  &.transparent {
-    background-color: transparent;
-  }
-
   &.active {
-    &:not(.transparent) {
+    &.shadow:not(.transparent) {
       box-shadow:
         2px 2px 0px black,
         12px 12px 0px rgba(0 0 0 / 0.15);
     }
   }
 
-  &.resizable {
-    resize: both;
+  &.desktopColor {
+    background-color: rgb(var(--color-desktop));
+
+    .window {
+      mask-image: linear-gradient(
+        to bottom,
+        transparent var(--wipe-percentage),
+        black var(--wipe-percentage)
+      );
+      animation: 0.1s wipe both steps(8);
+    }
+  }
+}
+
+.window {
+  display: grid;
+  overflow: hidden;
+  user-select: none;
+  height: 100%;
+  padding: 2px;
+  box-sizing: border-box;
+
+  &.transparent {
+    background-color: transparent;
   }
 
   .container {
@@ -242,6 +384,26 @@ onMounted(() => {
     position: relative;
     flex: 1 1 auto;
     overflow: auto;
+  }
+}
+
+.dragShadow {
+  position: absolute;
+  box-sizing: border-box;
+  z-index: 100;
+  pointer-events: none;
+  /* Terrible way to create an inverted border... */
+  &::before,
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    inset: 0;
+    backdrop-filter: invert(1);
+  }
+
+  &::after {
+    inset: 4px;
   }
 }
 </style>
