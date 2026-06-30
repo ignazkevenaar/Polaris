@@ -13,8 +13,8 @@
   --color-desktop: 92 144 164;
   --color-surface-active: 195 179 169;
   --color-surface-inactive: 195 179 169;
-  --color-container-active: WORD;
-  --color-container-inactive: WORD;
+  --color-container-active: 167 151 142;
+  --color-container-inactive: 167 151 142;
   --color-primary-active: 227 171 121;
   --color-primary-inactive: 153 153 153;
   --color-secondary-active: 92 144 164;
@@ -39,8 +39,54 @@
   --color-tertiary-inactive: 152 164 187;
   --color-field-active: 177 191 213;
   --color-field-inactive: 177 191 213;
+}
 
-  --color-dock-outline: var(--color-primary-inactive);
+.theme-dusk {
+  --color-desktop: 191 130 111;
+  --color-surface-active: 117 124 166;
+  --color-surface-inactive: 117 124 166;
+  --color-container-active: 77 100 141;
+  --color-container-inactive: 117 124 166;
+  --color-primary-active: 251 173 73;
+  --color-primary-inactive: 77 100 141;
+  --color-secondary-active: 43 121 133;
+  --color-secondary-inactive: 117 124 166;
+  --color-tertiary-active: 191 130 111;
+  --color-tertiary-inactive: 117 124 166;
+  --color-field-active: 77 100 141;
+  --color-field-inactive: 117 124 166;
+}
+
+.theme-towns {
+  --color-desktop: 204 204 204;
+  --color-surface-active: 255 255 255;
+  --color-surface-inactive: 255 255 255;
+  --color-container-active: 255 255 255;
+  --color-container-inactive: 255 255 255;
+  --color-primary-active: 34 119 187;
+  --color-primary-inactive: 255 255 255;
+  --color-secondary-active: 136 187 238;
+  --color-secondary-inactive: 119 119 119;
+  --color-tertiary-active: 136 187 238;
+  --color-tertiary-inactive: 119 119 119;
+  --color-field-active: 204 204 204;
+  --color-field-inactive: 255 255 255;
+}
+
+.theme-grass {
+  --color-desktop: 94 156 123;
+  --color-surface-active: 164 169 170;
+  --color-surface-inactive: 164 169 170;
+  --color-container-active: 139 143 144;
+  --color-container-inactive: 139 143 144;
+  --color-primary-active: 212 199 125;
+  --color-primary-inactive: 190 198 183;
+  --color-secondary-active: 94 156 123;
+  --color-secondary-inactive: 144 167 147;
+  --color-tertiary-active: 96 135 158;
+  --color-tertiary-inactive: 164 169 170;
+  --color-field-active: 139 143 144;
+  --color-field-inactive: 139 143 144;
 }
 
 .theme-solar {

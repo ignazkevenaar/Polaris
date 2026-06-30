@@ -9,6 +9,21 @@ export default {
     attribution: "",
     link: "",
   },
+  dusk: {
+    name: "Dusk",
+    attribution: "",
+    link: "https://myria.math.aegean.gr/~atsol/newpage-en/software/cde/index.html",
+  },
+  towns: {
+    name: "Towns",
+    attribution: "Loosely based on the FM Towns System Software 2.x theme",
+    link: "https://en.wikipedia.org/wiki/FM_Towns",
+  },
+  grass: {
+    name: "Grass",
+    attribution: "",
+    link: "https://raymii.org/s/blog/The_Common_Desktop_Environment_CDE_is_still_developed_in_2021.html",
+  },
   solar: {
     name: "Solar",
     attribution:
