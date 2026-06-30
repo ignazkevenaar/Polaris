@@ -67,7 +67,7 @@
 
 .text-shadow {
   // No custom contrast-color? No problem!
-  text-shadow: 0 2px
+  text-shadow: 0 1.5px
     color-mix(
       in srgb,
       contrast-color(contrast-color(rgb(var(--local-color)))),
