@@ -5,6 +5,7 @@ import FontApplication from "../components/applications/FontApplication.vue";
 import TestApplication from "../components/applications/TestApplication.vue";
 import ThemeApplication from "../components/applications/ThemeApplication.vue";
 import XEyesApplication from "../components/applications/XEyesApplication.vue";
+import ClockIcon from "../components/icons/ClockIcon.vue";
 
 export default {
   test: {
@@ -101,5 +102,13 @@ export default {
         href: "aboutme",
       },
     ],
+  },
+  clock: {
+    name: "Clock",
+    title: "Clock",
+    component: TestApplication,
+    icon: {
+      component: ClockIcon,
+    },
   },
 };

@@ -3,6 +3,7 @@ import { inject, ref } from "vue";
 import applications from "../../config/applications.js";
 import ApplicationWindow from "../ApplicationWindow.vue";
 import { useWindowManager } from "../../composables/windowManager.js";
+import IconContainer from "../IconContainer.vue";
 
 const { registerOrSwitch } = useWindowManager();
 
@@ -48,11 +49,10 @@ const openBrowser = inject("openBrowser");
             @dblclick="openBrowser(item.href) ?? openOrSwitchApplication(item)"
           >
             <div :class="getSelectedClasses(index, selectedIndex, active)">
-              <i
+              <IconContainer
                 v-if="item.icon ?? applications[item].icon"
-                class="icon-64"
-                :class="item.icon ?? applications[item].icon"
-              ></i>
+                :icon="item.icon ?? applications[item].icon"
+              />
             </div>
             <div
               class="label"

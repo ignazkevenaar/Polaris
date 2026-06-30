@@ -1,6 +1,7 @@
 <script setup>
 import { useWindowManager } from "../../composables/windowManager.js";
 import applications from "../../config/applications.js";
+import IconContainer from "../IconContainer.vue";
 import DockButton from "./DockButton.vue";
 
 const { registerOrSwitch, openWindowIDs } = useWindowManager();
@@ -32,7 +33,7 @@ defineProps({
       :tooltip="applications[applicationID].name"
       @click="openOrSwitchApplication(applicationID)"
     >
-      <i class="icon-64" :class="applications[applicationID].icon"></i>
+      <IconContainer :icon="applications[applicationID].icon" />
     </DockButton>
   </div>
 </template>

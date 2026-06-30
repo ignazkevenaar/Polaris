@@ -9,6 +9,6 @@ export default [
   },
   {
     type: "container",
-    items: ["trash"],
+    items: ["clock", "trash"],
   },
 ];

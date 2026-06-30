@@ -4,7 +4,7 @@
 $icons-64:
   clock, calendar, eyes, mailbox, browser, camera, trash, briefcase, finder,
   palette, cd, picture, eightball, model, ferrari, games, ignaz, rolodex,
-  wrench, application, grab, winamp, fonts;
+  wrench, application, grab, winamp, fonts, paintroller;
 
 $icons-16: back, forward, home, go, external, refresh, bookmark;
 
@@ -33,7 +33,9 @@ $icons-16: back, forward, home, go, external, refresh, bookmark;
   width: $icon-size;
   height: $icon-size;
   background-image: url("/img/icons-64.png");
-  filter: drop-shadow(3px 3px 0 rgb(0 0 0 / 0.2));
+  filter: drop-shadow(
+    var(--icon-shadow-depth) var(--icon-shadow-depth) 0 rgb(0 0 0 / 0.2)
+  );
 
   @include unwrapIcons($icons-64, $icon-size, $icons-per-row);
 }

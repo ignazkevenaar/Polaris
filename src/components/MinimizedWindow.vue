@@ -1,4 +1,6 @@
 <script setup>
+import IconContainer from "./IconContainer.vue";
+
 defineProps({
   title: {
     type: String,
@@ -15,7 +17,7 @@ defineProps({
   <button class="color-secondary bevel active">
     <span class="text-shadow">{{ title }}</span>
     <div class="container emboss color-surface">
-      <i v-if="icon" class="icon-64" :class="icon"></i>
+      <IconContainer v-if="icon" :icon="icon" />
     </div>
   </button>
 </template>
