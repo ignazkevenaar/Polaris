@@ -21,7 +21,7 @@ const setFontID = inject("setFont");
           <div class="emboss space">
             <div class="color-surface">
               <IconButton :text="font.name" @click="setFontID(fontID)">
-                <div class="fontPreview" :class="`font-${fontID}`">
+                <div class="fontPreview font" :class="`font-${fontID}`">
                   ABCDEFG abcdefg
                 </div>
               </IconButton>

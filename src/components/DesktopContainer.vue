@@ -80,7 +80,7 @@ const unfocusWindows = () => {
 
 <template>
   <div
-    class="desktop theme"
+    class="desktop theme font"
     :class="[`theme-${theme}`, `font-${font}`]"
     ref="desktop"
   >

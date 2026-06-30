@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import { ref, useTemplateRef, inject, watch } from "vue";
 import ApplicationWindow from "../ApplicationWindow.vue";
 import { useWindowManager } from "../../composables/windowManager.js";
 import StyledInput from "../StyledInput.vue";
 import bookmarks from "../../config/bookmarks.js";
 import IconButton from "../IconButton.vue";
 import bubbleIframeMouseEvents from "../../utils/bubbleIframeMouseEvents.js";
+import { injectStyles } from "../../config/injectStyles.js";
 
 const { changeTitle } = useWindowManager();
 
@@ -17,14 +18,17 @@ const props = defineProps({
   initialURL: { type: String, default: "index" },
 });
 
+const windowElement = useTemplateRef("window");
+
 const urlScope = "web/";
 const currentURL = ref(props.initialURL);
 const browserLocation = ref("");
 const iframeEl = ref(null);
 const throbberOn = ref(false);
 
-let iframeBackDepth = ref(0);
-let iframeMaxDepth = ref(0);
+const frameContentWindow = ref(undefined);
+const iframeBackDepth = ref(0);
+const iframeMaxDepth = ref(0);
 let isIframeFirstLoad = true;
 let pendingNavBack = false;
 let pendingNavForward = false;
@@ -39,6 +43,8 @@ const normalizeURL = (url) =>
 
 const onNavigate = (event) => {
   const contentWindow = event.target.contentWindow;
+  frameContentWindow.value = contentWindow;
+
   let href;
 
   try {
@@ -68,6 +74,7 @@ const onNavigate = (event) => {
   browserLocation.value = currentURL.value;
   changeTitle(props.windowID, `${contentWindow.document.title} — Browser`);
 
+  injectStyles(windowElement.value.$el, contentWindow.document.documentElement);
   bubbleIframeMouseEvents(event.target);
 
   throbberOn.value = true;
@@ -112,9 +119,21 @@ const selectAll = (event) => {
 const clearHistory = () => {
   window.history.pushState({}, "", `/`);
 };
+
+const currentThemeID = inject("theme");
+const currentFontID = inject("font");
+
+watch([currentThemeID, currentFontID], () => {
+  console.log("watcher fires");
+
+  injectStyles(
+    windowElement.value.$el,
+    frameContentWindow.value.document.documentElement,
+  );
+});
 </script>
 <template>
-  <ApplicationWindow @close="clearHistory">
+  <ApplicationWindow @close="clearHistory" ref="window">
     <template #toolbar="{ active }">
       <div class="toolbarContainer">
         <div class="toolbar color-surface apply-color" :class="{ active }">
